@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -122,9 +123,15 @@ public class BotaoSOSGUI {
         frame.add(sosButtonPanel, BorderLayout.SOUTH);
 
         JButton botaoAjuda = new JButton("Ajuda");
-
+        
         JButton botaoVerMapa = new JButton("Ver Mapa");
-        JButton Menu = new JButton("Menu");
+        JButton buttomenu = new JButton("Menu");
+        MenuApp abriuMenu=new MenuApp();
+        buttomenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent m){
+               abriuMenu.abrirMenu();
+            }
+        });
 
         JPanel botaoAjudaPanel = new JPanel();
         botaoAjuda.setBackground(new Color(0, 58, 106));
@@ -132,6 +139,7 @@ public class BotaoSOSGUI {
         botaoAjudaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         botaoAjudaPanel.add(botaoVerMapa);
         botaoAjudaPanel.add(botaoAjuda);
+        botaoAjudaPanel.add(buttomenu);
         painelSuperior.add(botaoAjudaPanel, BorderLayout.EAST);
 
         listaLugares.setSelectedItem(null);

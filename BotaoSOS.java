@@ -11,6 +11,7 @@ public class BotaoSOS extends JButton {
         setOpaque(false);
         setForeground(Color.WHITE);
         setPreferredSize(new Dimension(100, 100));
+       
         addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                     
