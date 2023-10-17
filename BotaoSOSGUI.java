@@ -27,30 +27,31 @@ import javax.swing.SwingUtilities;
 
 public class BotaoSOSGUI {
     private JFrame frame;
-
+    ListaLugares listaLugaresPanel = new ListaLugares();
     public BotaoSOSGUI() {
+
         User user = new User();
-        String matricula;
-        
         boolean matriculaValida = false;
 
-    for (int tentativas = 1; tentativas <= 3; tentativas++) {
-         matricula = JOptionPane.showInputDialog(frame, "Digite sua matrícula:");
+        for (int tentativas = 1; tentativas <= 3; tentativas++) {
+            String matricula = JOptionPane.showInputDialog(frame, "Digite sua matrícula:");
 
-        if (isNumeric(matricula) && matricula.length() == 12) {
-        user.setMatricula(matricula);
-        matriculaValida = true;
-        break; // Se a matrícula for válida, sai do loop
-        } else {
-        JOptionPane.showMessageDialog(frame, "Erro: A matrícula deve ter 12 dígitos numéricos. Tentativas restantes: " + (3 - tentativas));
+            if (MatriculaValidator.isValidMatricula(matricula)) {
+                user.setMatricula(matricula);
+                matriculaValida = true;
+                break;
+            } else {
+                MatriculaValidator.showMatriculaError();
+                JOptionPane.showMessageDialog(frame, "Tentativas restantes: " + (3 - tentativas));
+            }
         }
-}
+
 
         if (!matriculaValida) {
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-}
-        
-        
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        }
+
+
         frame = new JFrame("Sistema de SOS da UFS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 420);
@@ -91,6 +92,11 @@ public class BotaoSOSGUI {
                 "Reitoria", "Laboratório" };
         JComboBox<String> listaLugares = new JComboBox<>(lugares);
         listaLugares.setPreferredSize(new Dimension(400, listaLugares.getPreferredSize().height));
+        ListaLugares lugares2  = new ListaLugares();
+        JComboBox<String> listaLugare = lugares2.getListaLugares();
+
+// Agora você pode chamar o método fazerAlgoComListaLugares passando o JComboBox como argumento
+
         painelListaLugares.add(listaLugares);
 
         JPanel painelListaOcorrencias = new JPanel(new GridLayout(2, 1));
@@ -99,7 +105,7 @@ public class BotaoSOSGUI {
         labelSelecionarOcorrencia.setHorizontalAlignment(JLabel.CENTER);
         painelListaOcorrencias.add(labelSelecionarOcorrencia, BorderLayout.NORTH);
 
-        String[] ocorrencias = { "Ocorrência 1", "Ocorrência 2", "Ocorrência 3", "Ocorrência 4", "Ocorrência 5" };
+        String[] ocorrencias = { "Incêndio", "Assalto", "Atitude Suspeita", "Iluminação Prejudicada", "Se Perdeu", "Outro Tipo de Ocorrência(use a caixa de descrição)" };
         JComboBox<String> listaOcorrencias = new JComboBox<>(ocorrencias);
         listaOcorrencias.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         listaOcorrencias.setPreferredSize(new Dimension(400, listaOcorrencias.getPreferredSize().height));
@@ -122,10 +128,17 @@ public class BotaoSOSGUI {
 
         frame.add(sosButtonPanel, BorderLayout.SOUTH);
 
-        JButton botaoAjuda = new JButton("Ajuda");
-        
-        JButton botaoVerMapa = new JButton("Ver Mapa");
+
+
+
         JButton buttomenu = new JButton("Menu");
+        buttomenu.setBackground(new Color(0, 58, 106));
+        buttomenu.setForeground(Color.WHITE);
+        buttomenu.setPreferredSize(buttomenu.getPreferredSize());
+        JPanel botaoMenuPanel = new JPanel();
+        botaoMenuPanel.add(buttomenu);
+
+        painelSuperior.add(botaoMenuPanel, BorderLayout.EAST);
         MenuApp abriuMenu=new MenuApp();
         buttomenu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent m){
@@ -133,14 +146,6 @@ public class BotaoSOSGUI {
             }
         });
 
-        JPanel botaoAjudaPanel = new JPanel();
-        botaoAjuda.setBackground(new Color(0, 58, 106));
-        botaoAjuda.setForeground(Color.WHITE);
-        botaoAjudaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        botaoAjudaPanel.add(botaoVerMapa);
-        botaoAjudaPanel.add(botaoAjuda);
-        botaoAjudaPanel.add(buttomenu);
-        painelSuperior.add(botaoAjudaPanel, BorderLayout.EAST);
 
         listaLugares.setSelectedItem(null);
         listaOcorrencias.setSelectedItem(null);
@@ -162,72 +167,7 @@ public class BotaoSOSGUI {
                 botaoSOS.setEnabled(listaOcorrencias.getSelectedItem() != null);
             }
         });
-        
 
-
-        botaoAjuda.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFrame ajudaFrame = new JFrame("Ajuda");
-                ajudaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                ajudaFrame.setSize(500, 430);
-                ajudaFrame.setLocationRelativeTo(null);
-                ImageIcon frameIcon = new ImageIcon("assets/brasao_icon.png");
-                ajudaFrame.setIconImage(frameIcon.getImage());
-
-                JTextArea textoAjuda = new JTextArea();
-                textoAjuda.setWrapStyleWord(true);
-                textoAjuda.setLineWrap(true);
-                textoAjuda.setEditable(false);
-                textoAjuda.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                textoAjuda.setFont(new Font("Montserrat", Font.BOLD, 14));
-
-                textoAjuda.setText("Bem-vindo(a) ao Sistema de SOS da UFS!\n\n"
-                        + "Este sistema permite que você solicite ajuda em locais específicos da universidade.\n\n"
-                        + "Para solicitar ajuda:\n"
-                        + "1. Selecione o local do problema e o tipo de ocorrência nos menus suspensos.\n"
-                        + "2. Preencha o campo com sua matrícula e em seguida preencha o próximo campo descrevendo o problema.\n"
-                        + "3. Clique no botão 'SOS' para enviar sua solicitação de ajuda.\n\n"
-                        + "Sua solicitação será enviada para o(a) segurança mais próximo de você, basta aguardar.\n\n"
-                        + "Você também pode clicar no botão 'Ver Mapa' para visualizar o mapa da universidade.\n\n"
-                        + "Para obter mais informações, entre em contato com o suporte.");
-
-                JPanel painelAjuda = new JPanel(new BorderLayout());
-                painelAjuda.add(new JScrollPane(textoAjuda), BorderLayout.CENTER);
-                ajudaFrame.add(painelAjuda);
-                ajudaFrame.setVisible(true);
-            }
-        });
-
-        botaoVerMapa.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    File imageFile = new File("assets/mapa_ufs.png");
-                    BufferedImage image = ImageIO.read(imageFile);
-
-                    JFrame mapaFrame = new JFrame("Mapa da UFS");
-                    mapaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    mapaFrame.setSize(600, 800);
-                    mapaFrame.setLocationRelativeTo(null);
-                    ImageIcon frameIcon = new ImageIcon("assets/brasao_icon.png");
-                    mapaFrame.setIconImage(frameIcon.getImage());
-
-                    JPanel mapaPanel = new JPanel() {
-                        @Override
-                        protected void paintComponent(Graphics g) {
-                            super.paintComponent(g);
-                            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-                        }
-                    };
-
-                    mapaFrame.add(mapaPanel, BorderLayout.CENTER);
-                    mapaFrame.setVisible(true);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(frame, "Erro ao carregar a imagem do mapa.", "Erro",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
 
         frame.setVisible(true);
     }
